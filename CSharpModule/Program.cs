@@ -13,6 +13,7 @@ namespace CSharpModule
     using System.Collections.Generic;     // For KeyValuePair<>
     using Microsoft.Azure.Devices.Shared; // For TwinCollection
     using Newtonsoft.Json;                // For JsonConvert
+   
 
     class Program
     {
@@ -35,7 +36,7 @@ namespace CSharpModule
             public double temperature { get; set; }
             public int humidity { get; set; }
         }
-
+        
         static void Main(string[] args)
         {
             Init().Wait();
@@ -46,6 +47,7 @@ namespace CSharpModule
             Console.CancelKeyPress += (sender, cpe) => cts.Cancel();
             WhenCancelled(cts.Token).Wait();
         }
+
 
         /// <summary>
         /// Handles cleanup operations when app is cancelled or unloads
