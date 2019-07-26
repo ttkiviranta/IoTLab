@@ -1,0 +1,9 @@
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\bin\Debug\netstandard2.0\IoTLabClassLibrary.deps.json
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\bin\Debug\netstandard2.0\IoTLabClassLibrary.dll
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.csprojAssemblyReference.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.csproj.CoreCompileInputs.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.AssemblyInfoInputs.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.AssemblyInfo.cs
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\bin\Debug\netstandard2.0\IoTLabClassLibrary.pdb
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.dll
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabClassLibrary\obj\Debug\netstandard2.0\IoTLabClassLibrary.pdb

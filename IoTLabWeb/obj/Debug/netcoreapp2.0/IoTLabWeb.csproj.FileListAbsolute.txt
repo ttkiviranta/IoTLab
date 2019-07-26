@@ -1,0 +1,14 @@
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabWeb.deps.json
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabWeb.runtimeconfig.json
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabWeb.runtimeconfig.dev.json
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabWeb.dll
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.csprojAssemblyReference.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.csproj.CoreCompileInputs.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.AssemblyInfoInputs.cache
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.AssemblyInfo.cs
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabWeb.pdb
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabClassLibrary.dll
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\bin\Debug\netcoreapp2.0\IoTLabClassLibrary.pdb
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.csproj.CopyComplete
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.dll
+C:\Users\OMISTAJA\source\repos\azure\IoT\IotLab\IoTLab\IoTLabWeb\obj\Debug\netcoreapp2.0\IoTLabWeb.pdb

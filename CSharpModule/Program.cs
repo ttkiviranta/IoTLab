@@ -13,46 +13,82 @@ namespace CSharpModule
     using System.Collections.Generic;     // For KeyValuePair<>
     using Microsoft.Azure.Devices.Shared; // For TwinCollection
     using Newtonsoft.Json;                // For JsonConvert
-   
+    using IoTLabClassLibrary.Models;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.SignalR.Client;
 
     class Program
     {
         static int counter;
         static int temperatureThreshold { get; set; } = 25;
 
-        class MessageBody
-        {
-            public Machine machine { get; set; }
-            public Ambient ambient { get; set; }
-            public string timeCreated { get; set; }
-        }
-        class Machine
-        {
-            public double temperature { get; set; }
-            public double pressure { get; set; }
-        }
-        class Ambient
-        {
-            public double temperature { get; set; }
-            public int humidity { get; set; }
-        }
-        
+        private static readonly ILogger logger = CreateLogger("Program");
+
+    
         static void Main(string[] args)
         {
-            Init().Wait();
+// Testing SignalR
+         /*   var cancellationTokenSource = new CancellationTokenSource();
 
-            // Wait until the app unloads or is cancelled
-            var cts = new CancellationTokenSource();
-            AssemblyLoadContext.Default.Unloading += (ctx) => cts.Cancel();
-            Console.CancelKeyPress += (sender, cpe) => cts.Cancel();
-            WhenCancelled(cts.Token).Wait();
+            Task.Run(() => MainAsync(cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
+
+            Console.WriteLine("Press Enter to Exit ...");
+            Console.ReadLine();
+
+            cancellationTokenSource.Cancel();*/
+
+                  Init().Wait();
+
+                  // Wait until the app unloads or is cancelled
+                  var cts = new CancellationTokenSource();
+                  AssemblyLoadContext.Default.Unloading += (ctx) => cts.Cancel();
+                  Console.CancelKeyPress += (sender, cpe) => cts.Cancel();
+                  WhenCancelled(cts.Token).Wait();
+        }
+        //For SignalR testing...
+        private static async Task MainAsync(CancellationToken cancellationToken)
+        {
+            var hubConnection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5000/sensor")
+                .Build();
+
+            await hubConnection.StartAsync();
+            Console.WriteLine("Hub connection initialized.");
+
+            // Initialize a new Random Number Generator:
+            Random rnd = new Random();
+
+            double value = 0.0d;
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(250, cancellationToken);
+
+                // Generate the value to Broadcast to Clients:
+                value = Math.Min(Math.Max(value + (0.1 - rnd.NextDouble() / 5.0), -1), 1);
+
+                // Create the Measurement with a Timestamp assigned:
+                var measurement = new Measurement() { Timestamp = DateTime.UtcNow, Value = value };
+
+                // Log informations:
+                if (logger.IsEnabled(LogLevel.Trace))
+                {
+                    Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
+                }
+
+                // Finally send the value:
+                Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
+                await hubConnection.InvokeAsync("Broadcast", "Sensor", measurement, cancellationToken);
+            }
+
+            await hubConnection.DisposeAsync();
         }
 
 
         /// <summary>
         /// Handles cleanup operations when app is cancelled or unloads
         /// </summary>
-        public static Task WhenCancelled(CancellationToken cancellationToken)
+        static Task WhenCancelled(CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).SetResult(true), tcs);
@@ -65,6 +101,7 @@ namespace CSharpModule
         /// </summary>
         static async Task Init()
         {
+         
             AmqpTransportSettings amqpSetting = new AmqpTransportSettings(TransportType.Amqp_Tcp_Only);
             ITransportSettings[] settings = { amqpSetting };
 
@@ -82,6 +119,8 @@ namespace CSharpModule
 
             // Register a callback for messages that are received by the module.
             await ioTHubModuleClient.SetInputMessageHandlerAsync("input1", FilterMessages, ioTHubModuleClient);
+
+           
         }
 
         static Task OnDesiredPropertiesUpdate(TwinCollection desiredProperties, object userContext)
@@ -116,9 +155,11 @@ namespace CSharpModule
         /// It just pipe the messages without any change.
         /// It prints all the incoming messages.
         /// </summary>
-        static async Task<MessageResponse> FilterMessages(Message message, object userContext)
+        static async Task<MessageResponse> FilterMessages(Message message, object userContext )
         {
+            
             var counterValue = Interlocked.Increment(ref counter);
+            double value = 0.0d;
             try
             {
                 ModuleClient moduleClient = (ModuleClient)userContext;
@@ -128,6 +169,17 @@ namespace CSharpModule
 
                 // Get the message body.
                 var messageBody = JsonConvert.DeserializeObject<MessageBody>(messageString);
+                value = messageBody.machine.temperature;
+                var measurement = new Measurement() { Timestamp = DateTime.UtcNow, Value = value };
+
+                // Log informations:
+                if (logger.IsEnabled(LogLevel.Trace))
+                {
+                    Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
+                }
+
+                // Finally send the value:
+                //   await hubConnection.InvokeAsync("Broadcast", "Sensor", measurement);
 
                 if (messageBody != null && messageBody.machine.temperature > temperatureThreshold)
                 {
@@ -141,6 +193,7 @@ namespace CSharpModule
 
                     filteredMessage.Properties.Add("MessageType", "Alert");
                     await moduleClient.SendEventAsync("output1", filteredMessage);
+
                 }
 
                 // Indicate that the message treatment is completed.
@@ -166,5 +219,12 @@ namespace CSharpModule
                 return MessageResponse.Abandoned;
             }
         }
+        private static ILogger CreateLogger(string loggerName)
+        {
+            return new LoggerFactory()
+               // .AddConsole(LogLevel.Trace)
+                .CreateLogger(loggerName);
+        }
+
     }
 }

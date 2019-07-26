@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CSharpModule.Models
+namespace IoTLabClassLibrary.Models
 {
   //  public class TemperatureMessage
   //  {
