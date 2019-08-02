@@ -6,10 +6,9 @@
     <meta charset="utf-8" />
     <title>SignalR Real-time Chart Example</title>
     <script src="js/Chart.js"></script>
-    <script src="js/signalr-client.js"></script>
+    <script src="js/signalr.js"></script>
     <script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-            
+        document.addEventListener('DOMContentLoaded', function () {           
             var samples = 100;
             var speed = 250;
             var values = [];
@@ -26,9 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     type: 'line',
                     data: {
-                        labels: labels,
+                      labels: labels,
                         datasets: [
                             {
+                                //label: "Machine Temperature",
                                 data: values,
                                 backgroundColor: 'rgba(255, 99, 132, 0.1)',
                                 borderColor: 'rgb(255, 99, 132)',
@@ -48,13 +48,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         scales: {
                             xAxes: [
                                 {
-                                    display: false
+                                    display: true
                                 }
                             ],
                             yAxes: [
                                 {
+                                    display: true,
                                     ticks: {
-                                        max: 40,
+                                        beginAtZero: true,
+                                        max: 140,
                                         min: 0
                                     }
                                 }
@@ -63,22 +65,38 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-            var connection = new signalR.HubConnection("sensor");
+            //    var connection = new signalR.HubConnection("sensor");
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/sensor")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
 
             connection.on('Broadcast',
-                function(sender, message) {
+                function (sender, message) {
+                    var now = new Date();
                     values.push(message.value);
+                 //   labels.push(now.format("dd/MM/yyyy hh:mm:ss")); //NOK Todo
+                    labels.push(message.timestamp);
                     values.shift();
-
+                    labels.shift();
                     chart.update();
                 });
 
-            connection.start();
+            //   connection.start();
         });</script>
 
 </head>
 
 <body>
+    <br />
+    <div class="content">
+        <h1>Machine Temperature</h1>
+    </div>
+    <br style="line-height:5;">
     <canvas id="chart" style="width: 1024px; height: 640px"></canvas>
 </body>
 

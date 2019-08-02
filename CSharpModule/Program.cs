@@ -20,71 +20,30 @@ namespace CSharpModule
     class Program
     {
         static int counter;
-        static int temperatureThreshold { get; set; } = 25;
-
+        static int temperatureThreshold { get; set; } = 95; //You can use this value, for example, online graphics
+       
         private static readonly ILogger logger = CreateLogger("Program");
 
-    
+        static Measurement measurement = new Measurement();
+
+        private static HubConnection hubConnection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5000/sensor")
+                .Build();       
+
         static void Main(string[] args)
         {
-// Testing SignalR
-         /*   var cancellationTokenSource = new CancellationTokenSource();
-
-            Task.Run(() => MainAsync(cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
-
-            Console.WriteLine("Press Enter to Exit ...");
-            Console.ReadLine();
-
-            cancellationTokenSource.Cancel();*/
-
-                  Init().Wait();
+            var currentUser = Guid.NewGuid().ToString("N");
+            var cancellationTokenSource = new CancellationTokenSource();
+            
+            Init().Wait();
 
                   // Wait until the app unloads or is cancelled
-                  var cts = new CancellationTokenSource();
+                  var cts = new CancellationTokenSource(); 
                   AssemblyLoadContext.Default.Unloading += (ctx) => cts.Cancel();
                   Console.CancelKeyPress += (sender, cpe) => cts.Cancel();
                   WhenCancelled(cts.Token).Wait();
         }
-        //For SignalR testing...
-        private static async Task MainAsync(CancellationToken cancellationToken)
-        {
-            var hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/sensor")
-                .Build();
-
-            await hubConnection.StartAsync();
-            Console.WriteLine("Hub connection initialized.");
-
-            // Initialize a new Random Number Generator:
-            Random rnd = new Random();
-
-            double value = 0.0d;
-
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(250, cancellationToken);
-
-                // Generate the value to Broadcast to Clients:
-                value = Math.Min(Math.Max(value + (0.1 - rnd.NextDouble() / 5.0), -1), 1);
-
-                // Create the Measurement with a Timestamp assigned:
-                var measurement = new Measurement() { Timestamp = DateTime.UtcNow, Value = value };
-
-                // Log informations:
-                if (logger.IsEnabled(LogLevel.Trace))
-                {
-                    Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
-                }
-
-                // Finally send the value:
-                Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
-                await hubConnection.InvokeAsync("Broadcast", "Sensor", measurement, cancellationToken);
-            }
-
-            await hubConnection.DisposeAsync();
-        }
-
-
+       
         /// <summary>
         /// Handles cleanup operations when app is cancelled or unloads
         /// </summary>
@@ -101,7 +60,10 @@ namespace CSharpModule
         /// </summary>
         static async Task Init()
         {
-         
+            Console.WriteLine("Start Hub connection initializing.");
+            await hubConnection.StartAsync();
+            Console.WriteLine("Hub connection initialized.");
+
             AmqpTransportSettings amqpSetting = new AmqpTransportSettings(TransportType.Amqp_Tcp_Only);
             ITransportSettings[] settings = { amqpSetting };
 
@@ -119,8 +81,7 @@ namespace CSharpModule
 
             // Register a callback for messages that are received by the module.
             await ioTHubModuleClient.SetInputMessageHandlerAsync("input1", FilterMessages, ioTHubModuleClient);
-
-           
+            Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
         }
 
         static Task OnDesiredPropertiesUpdate(TwinCollection desiredProperties, object userContext)
@@ -153,9 +114,9 @@ namespace CSharpModule
         /// <summary>
         /// This method is called whenever the module is sent a message from the EdgeHub. 
         /// It just pipe the messages without any change.
-        /// It prints all the incoming messages.
+        /// It prints all the incoming messages and proadcast current message using SignalR.
         /// </summary>
-        static async Task<MessageResponse> FilterMessages(Message message, object userContext )
+        static async Task<MessageResponse> FilterMessages(Message message, object userContext)
         {
             
             var counterValue = Interlocked.Increment(ref counter);
@@ -169,17 +130,12 @@ namespace CSharpModule
 
                 // Get the message body.
                 var messageBody = JsonConvert.DeserializeObject<MessageBody>(messageString);
-                value = messageBody.machine.temperature;
-                var measurement = new Measurement() { Timestamp = DateTime.UtcNow, Value = value };
-
-                // Log informations:
+                
+                /* Log informations:
                 if (logger.IsEnabled(LogLevel.Trace))
                 {
                     Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
-                }
-
-                // Finally send the value:
-                //   await hubConnection.InvokeAsync("Broadcast", "Sensor", measurement);
+                }*/
 
                 if (messageBody != null && messageBody.machine.temperature > temperatureThreshold)
                 {
@@ -195,6 +151,13 @@ namespace CSharpModule
                     await moduleClient.SendEventAsync("output1", filteredMessage);
 
                 }
+
+                // Finally send the value:
+                measurement.Timestamp = DateTime.UtcNow;
+                value = messageBody.machine.temperature;
+                measurement.Value = value;
+                Console.WriteLine("Broadcasting Measurement to Clients ({0})", measurement);
+                await hubConnection.InvokeAsync("Broadcast", "Sensor", measurement);
 
                 // Indicate that the message treatment is completed.
                 return MessageResponse.Completed;
@@ -224,7 +187,6 @@ namespace CSharpModule
             return new LoggerFactory()
                // .AddConsole(LogLevel.Trace)
                 .CreateLogger(loggerName);
-        }
-
+        }       
     }
 }

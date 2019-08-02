@@ -11,15 +11,12 @@ namespace IoTLabWeb.Hubs
     {
         public Task Broadcast(string sender, Measurement measurement)
         {
+            string[] Exceptional = new string[1];
+            Exceptional[0] = Context.ConnectionId;
             return Clients
-            
-                // Do not Broadcast to Caller:
-                .AllExcept(new[] { Context.ConnectionId })
-                // Broadcast to all connected clients:
-              
-              //  .SendAsync("Broadcast", sender, measurement);
-                
-               .InvokeAsync("Broadcast", sender, measurement);
+                 // Do not Broadcast to Caller:
+                 //.AllExcept(Exceptional).SendAsync("Broadcast", sender, measurement);
+                 .All.SendAsync("Broadcast", sender, measurement);
         }
     }
 }

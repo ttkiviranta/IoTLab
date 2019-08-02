@@ -84,7 +84,7 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp2.0"
+          "netcoreapp2.1"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -92,7 +92,7 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp2.0": {
+          "netcoreapp2.1": {
             "projectReferences": {
               "C:\\Users\\OMISTAJA\\source\\repos\\azure\\IoT\\IotLab\\IoTLab\\IoTLabClassLibrary\\IoTLabClassLibrary.csproj": {
                 "projectPath": "C:\\Users\\OMISTAJA\\source\\repos\\azure\\IoT\\IotLab\\IoTLab\\IoTLabClassLibrary\\IoTLabClassLibrary.csproj"
@@ -107,20 +107,20 @@
         }
       },
       "frameworks": {
-        "netcoreapp2.0": {
+        "netcoreapp2.1": {
           "dependencies": {
             "Microsoft.AspNetCore.All": {
               "target": "Package",
-              "version": "[2.0.9, )"
+              "version": "[2.1.12, )"
             },
             "Microsoft.AspNetCore.SignalR": {
               "target": "Package",
-              "version": "[1.0.0-alpha2-final, )"
+              "version": "[1.1.0, )"
             },
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.0.0, )",
+              "version": "[2.1.0, )",
               "autoReferenced": true
             }
           },
